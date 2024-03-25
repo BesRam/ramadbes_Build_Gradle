@@ -3,6 +3,16 @@
  */
 package ramadbes_build_gradle;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+
 import com.indvd00m.ascii.render.Render;
 import com.indvd00m.ascii.render.api.ICanvas;
 import com.indvd00m.ascii.render.api.IContextBuilder;
@@ -14,7 +24,7 @@ public class App {
         return "Hello World!";
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println(new App().getGreeting());
 
         IRender render = new Render();
@@ -24,5 +34,19 @@ public class App {
 		ICanvas canvas = render.render(builder.build());
 		String s = canvas.getText();
 		System.out.println(s);
+
+        // PDF Box
+        PDDocument helloPdf = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A4);
+        helloPdf.addPage(page);
+        PDPageContentStream contentStream = new PDPageContentStream(helloPdf, page);
+        contentStream.beginText();
+        contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 36);
+        contentStream.newLineAtOffset(5, 400);
+        contentStream.showText("ramadbes was here");
+        contentStream.endText();
+        contentStream.close();
+        helloPdf.save(new File("simple.pdf"));
+        helloPdf.close();
     }
 }
